@@ -121,7 +121,7 @@ export default function BetalenPage() {
                 {pakket.naam}
               </h2>
               <div style={{ marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '2.5rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.03em' }}>€{pakket.prijs}</span>
+                <span style={{ fontSize: '2.5rem', fontWeight: 800, color: '#0066CC', letterSpacing: '-0.03em' }}>€{pakket.prijs}</span>
                 <span style={{ color: '#64748b', fontSize: '0.875rem', marginLeft: '0.25rem' }}>eenmalig</span>
               </div>
               <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1.25rem', lineHeight: 1.6 }}>

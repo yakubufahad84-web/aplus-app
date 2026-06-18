@@ -9,14 +9,42 @@ const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['400', '500', '
 
 export default function SignupPage() {
   const router = useRouter()
+  const [voornaam, setVoornaam] = useState('')
+  const [achternaam, setAchternaam] = useState('')
+  const [geboortedatum, setGeboortedatum] = useState('')
+  const [telefoon, setTelefoon] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const inputStyle = {
+    width: '100%',
+    border: '1.5px solid #e2e8f0',
+    borderRadius: '0.625rem',
+    padding: '0.75rem 1rem',
+    fontSize: '0.875rem',
+    color: '#0f172a',
+    outline: 'none',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box' as const,
+  }
+
+  const labelStyle = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    color: '#0f172a',
+    marginBottom: '0.375rem',
+  }
+
   async function handleSignup() {
     setError('')
+    if (!voornaam || !achternaam || !geboortedatum || !telefoon || !email) {
+      setError('Vul alle velden in.')
+      return
+    }
     if (password !== confirm) {
       setError('Wachtwoorden komen niet overeen.')
       return
@@ -26,7 +54,18 @@ export default function SignupPage() {
       return
     }
     setLoading(true)
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          voornaam,
+          achternaam,
+          geboortedatum,
+          telefoon,
+        }
+      }
+    })
     if (error) {
       setError(error.message)
     } else {
@@ -43,6 +82,7 @@ export default function SignupPage() {
       justifyContent: 'center',
       background: 'linear-gradient(160deg, #1e3a8a 0%, #0055aa 50%, #0066CC 100%)',
       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+      padding: '2rem 0',
     }}>
       <div style={{
         background: '#ffffff',
@@ -50,59 +90,63 @@ export default function SignupPage() {
         boxShadow: '0 40px 64px -12px rgb(0 0 0 / 0.18)',
         padding: '2.5rem',
         width: '100%',
-        maxWidth: '420px',
+        maxWidth: '480px',
         margin: '0 1rem',
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" width={80} height={80} style={{ marginBottom: '1rem' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" width={72} height={72} style={{ marginBottom: '1rem' }}>
             <circle cx="32" cy="32" r="31" fill="white"/>
             <circle cx="32" cy="32" r="29" fill="none" stroke="#0066CC" strokeWidth="4.5"/>
             <circle cx="32" cy="32" r="22" fill="none" stroke="#f97316" strokeWidth="3"/>
             <text x="29" y="44" fontFamily="'Arial Black',Arial,sans-serif" fontSize="30" fontWeight="900" fill="#0066CC" textAnchor="middle">A</text>
             <text x="47" y="35" fontFamily="'Arial Black',Arial,sans-serif" fontSize="20" fontWeight="900" fill="#f97316" textAnchor="middle">+</text>
           </svg>
-          <h1 style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0066CC', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '0.25rem' }}>A+ Theorie</h1>
+          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0066CC', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '0.25rem' }}>A+ Theorie</h1>
           <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#f97316' }}>Maak een gratis account aan</p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#0f172a', marginBottom: '0.375rem' }}>
-              E-mailadres
-            </label>
-            <input
-              type="email"
-              placeholder="jouw@email.nl"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={{ width: '100%', border: '1.5px solid #e2e8f0', borderRadius: '0.625rem', padding: '0.75rem 1rem', fontSize: '0.875rem', color: '#0f172a', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
-            />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+          {/* Naam rij */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={labelStyle}>Voornaam <span style={{ color: '#64748b', fontWeight: 400, fontSize: '0.75rem' }}>(zoals op paspoort)</span></label>
+              <input type="text" placeholder="Jan" value={voornaam} onChange={e => setVoornaam(e.target.value)} style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Achternaam</label>
+              <input type="text" placeholder="de Vries" value={achternaam} onChange={e => setAchternaam(e.target.value)} style={inputStyle} />
+            </div>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#0f172a', marginBottom: '0.375rem' }}>
-              Wachtwoord
-            </label>
-            <input
-              type="password"
-              placeholder="Minimaal 8 tekens"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              style={{ width: '100%', border: '1.5px solid #e2e8f0', borderRadius: '0.625rem', padding: '0.75rem 1rem', fontSize: '0.875rem', color: '#0f172a', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
-            />
+          {/* Geboortedatum + Telefoon rij */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={labelStyle}>Geboortedatum</label>
+              <input type="date" value={geboortedatum} onChange={e => setGeboortedatum(e.target.value)} style={inputStyle} />
+            </div>
+            <div>
+              <label style={labelStyle}>Telefoonnummer</label>
+              <input type="tel" placeholder="06 12345678" value={telefoon} onChange={e => setTelefoon(e.target.value)} style={inputStyle} />
+            </div>
           </div>
 
+          {/* Email */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#0f172a', marginBottom: '0.375rem' }}>
-              Wachtwoord bevestigen
-            </label>
-            <input
-              type="password"
-              placeholder="Herhaal je wachtwoord"
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              style={{ width: '100%', border: '1.5px solid #e2e8f0', borderRadius: '0.625rem', padding: '0.75rem 1rem', fontSize: '0.875rem', color: '#0f172a', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
-            />
+            <label style={labelStyle}>E-mailadres</label>
+            <input type="email" placeholder="jouw@email.nl" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
+          </div>
+
+          {/* Wachtwoord */}
+          <div>
+            <label style={labelStyle}>Wachtwoord</label>
+            <input type="password" placeholder="Minimaal 8 tekens" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} />
+          </div>
+
+          {/* Bevestig wachtwoord */}
+          <div>
+            <label style={labelStyle}>Wachtwoord bevestigen</label>
+            <input type="password" placeholder="Herhaal je wachtwoord" value={confirm} onChange={e => setConfirm(e.target.value)} style={inputStyle} />
           </div>
 
           {error && (
@@ -112,7 +156,21 @@ export default function SignupPage() {
           <button
             onClick={handleSignup}
             disabled={loading}
-            style={{ width: '100%', background: 'linear-gradient(135deg, #1e3a8a 0%, #0066CC 100%)', color: '#ffffff', fontWeight: 700, fontSize: '0.9375rem', padding: '0.75rem', borderRadius: '0.625rem', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px -4px rgb(0 102 204 / 0.35)', opacity: loading ? 0.7 : 1 }}
+            style={{
+              width: '100%',
+              background: 'linear-gradient(135deg, #1e3a8a 0%, #0066CC 100%)',
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: '0.9375rem',
+              padding: '0.75rem',
+              borderRadius: '0.625rem',
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontFamily: 'inherit',
+              boxShadow: '0 8px 24px -4px rgb(0 102 204 / 0.35)',
+              opacity: loading ? 0.7 : 1,
+              marginTop: '0.25rem',
+            }}
           >
             {loading ? 'Bezig...' : 'Account aanmaken'}
           </button>
